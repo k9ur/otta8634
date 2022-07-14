@@ -1,4 +1,5 @@
 ### Hi there 👋
+ I don't actively use GitHub, message me at k9wolf@pm.me or on Discord: k9#8634.
 
 <!--
 **otta8634/otta8634** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
