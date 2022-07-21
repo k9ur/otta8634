@@ -13,8 +13,8 @@ function getObj(name, arr) {
 // Manages dependencies by expanding and re-ordering the array
 // If we have A.before = [ "B" ], B.before = [ "C" ], A.before will be expanded into [ "B", "C" ].
 function manageDependencies(obj, depen, arr) {
-	if(!depen || !loop) return;
-	if(depen === []) return;
+	if(!obj.name || !depen || !loop) return;
+	if(!depen.length) return;
 
 	for(var name of depen) {
 		if(name === obj.name) {
@@ -22,10 +22,9 @@ function manageDependencies(obj, depen, arr) {
 			loop = false;
 		} else {
 			let beforeObj = getObj(name, arr);
-			let _nextDepen = beforeObj.before;
-			if(!_nextDepen) continue;
+			let nextDepen = beforeObj.before.filter(n => !obj.before.includes(n));
+			if(!nextDepen.length) return;
 
-			nextDepen = _nextDepen.filter(n => !obj.before.includes(n));
 			obj.before = obj.before.concat(nextDepen);
 			manageDependencies(obj, nextDepen, arr); // Iterate again with new dependencies
 
@@ -52,14 +51,14 @@ function afterIntoBefore(obj, arr) {
 
 // Main function
 function sortByDependencies(arr) {
-	for(var obj of arr) {
-		if(!obj.before) obj.before = [];
-	}
-
-	// Main body
 	let res = [...arr];
+
+	res.forEach(obj => {
+		if(!obj.before) obj.before = [];
+	});
 	res.forEach(obj => afterIntoBefore(obj, res));
 	res.forEach(obj => manageDependencies(obj, obj.before, res));
+	// Objects without a name can't be sorted, and by default are shuffled towards the end
 
 	if(!loop) return;
 	return res;
