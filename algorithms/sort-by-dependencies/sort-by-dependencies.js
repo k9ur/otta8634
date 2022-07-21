@@ -13,9 +13,9 @@ function getObj(name, arr) {
 
 // Manages dependencies by expanding and re-ordering the array
 // If we have A.before = [ "B" ], B.before = [ "C" ], A.before will be expanded into [ "B", "C" ].
+// depen is an array of the names of the (original or newly added) dependencies of obj
 function manageDependencies(obj, depen, arr) {
-	if(!obj.name || !depen || !loop) return true;
-	if(!depen.length) return true;
+	if(!obj.name || !depen.length || !loop) return loop;
 
 	for(var name of depen) {
 		if(name === obj.name) {
@@ -43,6 +43,7 @@ function manageDependencies(obj, depen, arr) {
 }
 
 // Fixing befores then fixing afters isn't correct logic
+// arr is required for getObj
 function afterIntoBefore(obj, arr) {
 	if(!obj.name || !obj.after) return;
 	for(var name of obj.after) {
@@ -63,6 +64,7 @@ function printTrace(trace) {
 
 
 // Main function
+// arr is the array to sort
 function sortByDependencies(arr) {
 	let res = [...arr]; // Copy arr
 
