@@ -5,6 +5,7 @@
 
 
 let loop = true;
+let trace = [];
 
 function getObj(name, arr) {
 	return arr.find(obj => obj.name === name);
@@ -18,22 +19,27 @@ function manageDependencies(obj, depen, arr) {
 
 	for(var name of depen) {
 		if(name === obj.name) {
-			console.log(`${name} was linked back to itself as a dependency. Quitting.`); // TODO: find path
-			loop = false;
+			trace.unshift(name);
+			return loop = false;
 		} else {
 			let beforeObj = getObj(name, arr);
 			let nextDepen = beforeObj.before.filter(n => !obj.before.includes(n));
 			if(!nextDepen.length) return;
 
 			obj.before = obj.before.concat(nextDepen);
-			manageDependencies(obj, nextDepen, arr); // Iterate again with new dependencies
+			let ret = manageDependencies(obj, nextDepen, arr); // Iterate again with new dependencies
 
-			if(arr.indexOf(obj) > arr.indexOf(beforeObj)) { // After the obj which it needs to come before in the array
+			if(!ret) {
+				trace.unshift(name);
+				return ret;
+			} else if(arr.indexOf(obj) > arr.indexOf(beforeObj)) { // After the obj which it needs to come before in the array
 				arr.splice(arr.indexOf(obj), 1);            // Remove obj
 				arr.splice(arr.indexOf(beforeObj), 0, obj); // Insert obj right before beforeObj
 			}
 		}
 	}
+
+	return true;
 }
 
 // Fixing befores then fixing afters isn't correct logic
@@ -48,6 +54,13 @@ function afterIntoBefore(obj, arr) {
 	delete obj.after;
 }
 
+// Trace of how an object was linked back to itself as a dependency
+function printTrace(trace) {
+	let last = trace[trace.length - 1];
+	trace.unshift(last);
+	return last + " was linked back to itself as a dependency: " + trace.join(" -> ");
+}
+
 
 // Main function
 function sortByDependencies(arr) {
@@ -60,7 +73,7 @@ function sortByDependencies(arr) {
 	res.forEach(obj => manageDependencies(obj, obj.before, res));
 	// Objects without a name can't be sorted, and by default are shuffled towards the end
 
-	if(!loop) return;
+	if(!loop) return printTrace(trace);
 	return res;
 }
 
