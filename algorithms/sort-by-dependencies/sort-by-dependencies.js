@@ -14,8 +14,8 @@ function getObj(name, arr) {
 // Manages dependencies by expanding and re-ordering the array
 // If we have A.before = [ "B" ], B.before = [ "C" ], A.before will be expanded into [ "B", "C" ].
 function manageDependencies(obj, depen, arr) {
-	if(!obj.name || !depen || !loop) return;
-	if(!depen.length) return;
+	if(!obj.name || !depen || !loop) return true;
+	if(!depen.length) return true;
 
 	for(var name of depen) {
 		if(name === obj.name) {
@@ -24,7 +24,7 @@ function manageDependencies(obj, depen, arr) {
 		} else {
 			let beforeObj = getObj(name, arr);
 			let nextDepen = beforeObj.before.filter(n => !obj.before.includes(n));
-			if(!nextDepen.length) return;
+			if(!nextDepen.length) continue;
 
 			obj.before = obj.before.concat(nextDepen);
 			let ret = manageDependencies(obj, nextDepen, arr); // Iterate again with new dependencies
@@ -33,8 +33,8 @@ function manageDependencies(obj, depen, arr) {
 				trace.unshift(name);
 				return ret;
 			} else if(arr.indexOf(obj) > arr.indexOf(beforeObj)) { // After the obj which it needs to come before in the array
-				arr.splice(arr.indexOf(obj), 1);            // Remove obj
-				arr.splice(arr.indexOf(beforeObj), 0, obj); // Insert obj right before beforeObj
+				arr.splice(arr.indexOf(obj), 1);                   // Remove obj
+				arr.splice(arr.indexOf(beforeObj), 0, obj);        // Insert obj right before beforeObj
 			}
 		}
 	}
@@ -64,13 +64,16 @@ function printTrace(trace) {
 
 // Main function
 function sortByDependencies(arr) {
-	let res = [...arr];
+	let res = [...arr]; // Copy arr
 
+	// Can't merge these iterations
 	res.forEach(obj => {
 		if(!obj.before) obj.before = [];
 	});
 	res.forEach(obj => afterIntoBefore(obj, res));
-	res.forEach(obj => manageDependencies(obj, obj.before, res));
+	for(var obj of res) {
+		if(!manageDependencies(obj, obj.before, res)) break;
+	}
 	// Objects without a name can't be sorted, and by default are shuffled towards the end
 
 	if(!loop) return printTrace(trace);
