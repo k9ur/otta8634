@@ -1,3 +1,9 @@
 # Vim
 *~
 .*.un~
+
+# python
+__pycache__/
+
+# nodeJS
+node_modules/
