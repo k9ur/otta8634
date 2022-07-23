@@ -6,7 +6,8 @@ B = { "name": "B" }
 C = { "name": "C", "before": ["E"], "after": ["B"] }
 D = { "name": "D", "after": ["C"] }
 E = { "name": "E", "after": ["A", "B"] }
-F = {} #has no name so can't be sorted
+F = {} # has no name so can't be sorted
 
-test_list = [C, D, F, E, A, B]
+test_list = [ C, D, F, E, A, B ]
 print(sort_by_dependencies(test_list))
+# [ A, B, C, E, D ] or [ A, B, C, D, E ] are valid, with F placed anywhere, most likely towards the end
