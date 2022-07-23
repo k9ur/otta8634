@@ -24,6 +24,14 @@ function manageDependencies(obj, depen, arr) {
 		}
 
 		let beforeObj = getObj(name, arr);
+
+		let i1 = arr.indexOf(obj);
+		let i2 = arr.indexOf(beforeObj);
+		if(i1 > i2) {               // After the object which it needs to come before in the array
+			arr.splice(i1, 1);      // Remove obj
+			arr.splice(i2, 0, obj); // Insert obj right before beforeObj
+		}
+
 		let nextDepen = beforeObj.before.filter(n => !obj.before.includes(n)); // New dependencies
 		if(!nextDepen.length) continue;
 
@@ -34,19 +42,13 @@ function manageDependencies(obj, depen, arr) {
 			trace.unshift(name);
 			return ret;
 		}
-		let i1 = arr.indexOf(obj);
-		let i2 = arr.indexOf(beforeObj);
-		if(i1 > i2) {               // After the object which it needs to come before in the array
-			arr.splice(i1, 1);      // Remove obj
-			arr.splice(i2, 0, obj); // Insert obj right before beforeObj
-		}
 	}
 
 	return true;
 }
 
 // Fixing befores then fixing afters isn't correct logic
-// Function turns afters into befors, and also adds before to all objects if not previously present
+// Function turns afters into befores, and also adds before to all objects if not previously present
 // arr is required for getObj
 function manageAftersAndBefores(obj, arr) {
 	if(!obj.before) obj.before = [];
@@ -55,7 +57,7 @@ function manageAftersAndBefores(obj, arr) {
 	for(var name of obj.after) {
 		let beforeObj = getObj(name, arr);
 		if(!beforeObj.before) beforeObj.before = [];
-		if(beforeObj.before.includes(obj.name)) return;
+		if(beforeObj.before.includes(obj.name)) continue;
 
 		beforeObj.before = beforeObj.before.concat(obj.name);
 	}

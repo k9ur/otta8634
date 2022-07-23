@@ -25,6 +25,12 @@ def manage_dependencies(dct, depen, lst):
 			return False
 		
 		before_dct = get_dct(name, lst)
+
+		i1 = lst.index(dct)
+		i2 = lst.index(before_dct)
+		if i1 > i2:                     # After the dict which it needs to come before in the list
+			lst.insert(i2, lst.pop(i1)) # Move dct to right before before_dct
+
 		next_depen = list(set(before_dct["before"]) - set(dct["before"])) # New dependencies
 		if not len(next_depen):
 			continue
@@ -35,15 +41,11 @@ def manage_dependencies(dct, depen, lst):
 		if not ret:
 			trace.insert(0, name)
 			return ret
-		i1 = lst.index(dct)
-		i2 = lst.index(before_dct)
-		if i1 > i2:                     # After the dict which it needs to come before in the list
-			lst.insert(i2, lst.pop(i1)) # Move dct to right before before_dct
 	
 	return True
 
 # Fixing befores then fixing afters isn't correct logic
-# Function turns afters into befors, and also adds before to all objects if not previously present
+# Function turns afters into befores, and also adds before to all dicts if not previously present
 # lst is required for get_dct
 def manage_afters_and_befores(dct, lst):
 	keys = dct.keys()
@@ -57,7 +59,7 @@ def manage_afters_and_befores(dct, lst):
 		if "before" not in before_dct.keys():
 			before_dct["before"] = []
 		if dct["name"] in before_dct["before"]:
-			return
+			continue
 
 		before_dct["before"].append(dct["name"])
 	del dct["after"]
