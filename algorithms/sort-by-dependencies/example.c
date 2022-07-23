@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 	strcpy(E.after[0], "A");
 	strcpy(E.after[1], "B");
 
-	// Handle dat
+	// Handle data
 	void* output = sort_by_dependencies(arr, arr_size);
 	if(sort_success) {
 		Object **output_arr = (Object**)output;
