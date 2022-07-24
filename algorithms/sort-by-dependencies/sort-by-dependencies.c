@@ -137,13 +137,13 @@ void manage_afters_and_befores(Object *obj, Object *array[]) {
 }
 
 // Trace of how an object was linked back to itself as a dependency
-char* print_trace() {
-	strcpy(trace_res, trace[0]);
+char* print_trace(char trace_arr[][MAX_LEN]) {
+	strcpy(trace_res, trace_arr[0]);
 	strcat(trace_res, " was linked back to itself as a dependency: ");
-	strcat(trace_res, trace[0]);
+	strcat(trace_res, trace_arr[0]);
 	for(short t_i = 0; t_i < trace_count; t_i++) {
 		strcat(trace_res, " -> ");
-		strcat(trace_res, trace[trace_count - t_i - 1]);
+		strcat(trace_res, trace_arr[trace_count - t_i - 1]);
 	}
 	return trace_res;
 }

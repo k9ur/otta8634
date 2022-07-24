@@ -18,8 +18,7 @@ typedef struct Object {
 
 extern uint8_t sort_success;
 extern size_t array_size;
-//Object *res[MAX_OBJECTS];
 
-void* sort_by_dependencies(Object *array[], short arr_size);
+void* sort_by_dependencies(Object *[], short);
 
 #endif
